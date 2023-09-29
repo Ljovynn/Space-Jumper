@@ -4,10 +4,38 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    // Start is called before the first frame update
+    private GameObject spaceShip;
+    private MapManager mapManager;
+
+    public static GameManager instance;
+
     void Start()
     {
-        
+    }
+
+    private void OnEnable()
+    {
+        Goal.goalReached += SpaceshipReachedGoal;
+    }
+
+    private void OnDisable()
+    {
+        Goal.goalReached -= SpaceshipReachedGoal;
+    }
+
+    void SpaceshipReachedGoal()
+    {
+
+    }
+
+    public void Initialize()
+    {
+        if (instance == null)
+        {
+            instance = this;
+            return;
+        }
+        Destroy(gameObject);
     }
 
     // Update is called once per frame

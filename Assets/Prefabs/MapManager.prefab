@@ -1,0 +1,55 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &5043878230083896171
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3471414818925463008}
+  - component: {fileID: 1220844797796972494}
+  m_Layer: 0
+  m_Name: MapManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3471414818925463008
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5043878230083896171}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1220844797796972494
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5043878230083896171}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 257e18e9564c6e0498e5a4ae68473e40, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  groundPrefab: {fileID: 1156093655394922654, guid: fa1a4d3edc2b2ce40a7f01a92c878911, type: 3}
+  conePrefab: {fileID: 5004910979941916789, guid: 0f7b3764c7f041045b30277bc22e42b2, type: 3}
+  asteroidPrefab: {fileID: 8286868249677927111, guid: 87c965cdda24d034991460526dde4930, type: 3}
+  prismPrefab: {fileID: 8859141808939457774, guid: 53aafbf16d8ca93438508cdd84b1c02d, type: 3}
+  spaceshipPrefab: {fileID: 1878533251954286215, guid: 07a46f146169765429dc44ec7b675f9f, type: 3}
+  startingPlatformPrefab: {fileID: 8344015946916985744, guid: 85f02c94a49d3994bbfc537e9cfae662, type: 3}
+  goalPrefab: {fileID: 4811355755923582747, guid: 6d0439fe1a56fe7488f7ac087bcb5101, type: 3}
+  approachingPoisonPrefab: {fileID: 2396240780744925809, guid: 77a291820e672f24da164cc3720a4a8e, type: 3}
+  ceilingPoisonPrefab: {fileID: -3809735744293758634, guid: bdabad09b98e5fa4682fcccc6a332354, type: 3}

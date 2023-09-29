@@ -2,12 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class InstantiationManager : MonoBehaviour
+public class UIManager : MonoBehaviour
 {
-    // Start is called before the first frame update
+    public void Initialize()
+    {
+        
+    }
     void Start()
     {
-        //map, then camera
+        
     }
 
     // Update is called once per frame

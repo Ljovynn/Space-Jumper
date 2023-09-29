@@ -5,13 +5,27 @@ using UnityEngine;
 public class CameraManager : MonoBehaviour
 {
     [SerializeField] private Transform targetTransform;
-    private Vector3 cameraOffset;
+    private Vector3 cameraOffset = new Vector3(15, 1, -30);
     private float cameraSpeed = 0.08f;
     private bool active = false;
 
+    public static CameraManager instance;
+
     void Start()
     {
-        cameraOffset = new Vector3(15, 1, -30);
+ 
+    }
+
+    public void Initialize()
+    {
+        if (instance == null)
+        {
+            instance = this;
+            active = true;
+            targetTransform = GameObject.FindGameObjectWithTag("Player").transform;
+            return;
+        }
+        Destroy(gameObject);
     }
 
     // Update is called once per frame
