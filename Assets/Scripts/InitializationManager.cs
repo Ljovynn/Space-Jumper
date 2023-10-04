@@ -8,12 +8,26 @@ public class InitializationManager : MonoBehaviour
     [SerializeField] private CameraManager cameraManagerPrefab;
     [SerializeField] private GameManager gameManagerPrefab;
     [SerializeField] private UIManager uiManagerPrefab;
+    [SerializeField] private bool loadMainMenuAtStart = true;
+    private static bool initialized = false;
     void Awake()
     {
-        LoadMapManager();
-        LoadCameraManager();
-        LoadGameManager();
-        LoadUIManager();
+        if (!initialized)
+        {
+            LoadMapManager();
+            LoadCameraManager();
+            LoadGameManager();
+            LoadUIManager();
+            if (loadMainMenuAtStart)
+            {
+                UIManager.Instance.LoadMenu();
+            }
+            else
+            {
+                UIManager.Instance.StartGameButton();
+            }
+            initialized = false;
+        }
     }
 
     void LoadMapManager()

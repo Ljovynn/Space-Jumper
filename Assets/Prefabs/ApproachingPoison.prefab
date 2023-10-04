@@ -12,9 +12,10 @@ GameObject:
   - component: {fileID: 7114214447887209131}
   - component: {fileID: 1412872758881662493}
   - component: {fileID: 2396240780744925809}
+  - component: {fileID: 2625164657621080806}
   m_Layer: 0
   m_Name: ApproachingPoison
-  m_TagString: Untagged
+  m_TagString: Poison
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -4859,3 +4860,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8f3b9c45528a88340adf810173504118, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!65 &2625164657621080806
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5966195033100294364}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 160, y: 7, z: 75.427155}
+  m_Center: {x: -47, y: 0, z: 0}

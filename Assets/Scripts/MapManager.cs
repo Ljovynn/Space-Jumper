@@ -8,17 +8,18 @@ using UnityEngine.ProBuilder.Shapes;
 
 public class MapManager : MonoBehaviour
 {
-    private float goalDistance = 1000;
+    private float goalDistance = 50;//1000;
     private float goalYDistance = 4;
     private float generationBufferXPos = 50;
 
-    private float poisonHeight = 70;
-    private float poisonDPS = 3;
-    private Vector2 approachingPoisonStart = new Vector2(-50, 10);
+    private int levels = 3;
+
+    private float poisonHeight = 60;
+    private Vector2 approachingPoisonStart = new Vector2(-60, 10);
     private float[] poisionSpeed = { 2, 4, 8 };
 
     private float startingPlatformXPos = 0;
-    private float startingPlatformYDistance = 8;
+    private float startingPlatformYDistance = 9;
     private float imporantAreaBufferDistance = 12;
     private float spaceshipSpawnDistanceY = 2;
 
@@ -50,10 +51,12 @@ public class MapManager : MonoBehaviour
     private float asteroidMaxClusterDistance = 40;
     private float asteroidSmallMinYPos = 7;
     private float asteroidLargeMinYPos = 10;
-    private float asteroidMaxYPos = 40;
+    private float asteroidMaxYPos = 54;
 
     private float prismMinLength = 5;
     private float prismMaxLength = 60;
+
+    [SerializeField] private GameObject mapPrefab;
 
     [SerializeField] private GameObject groundPrefab;
     [SerializeField] private GameObject conePrefab;
@@ -61,17 +64,21 @@ public class MapManager : MonoBehaviour
     [SerializeField] private GameObject prismPrefab;
     [SerializeField] private Spaceship spaceshipPrefab;
     [SerializeField] private GameObject startingPlatformPrefab;
-    [SerializeField] private Goal goalPrefab;
+    [SerializeField] private GameObject goalPrefab;
     [SerializeField] private ApproachingPoison approachingPoisonPrefab;
     [SerializeField] private CeilingPoison ceilingPoisonPrefab;
 
-    private List<GameObject> mapObjects = new List<GameObject>();
-
     private GameObject startingPlatform;
-    private Spaceship spaceship;
-    private Goal goal;
+    private GameObject goal;
     private ApproachingPoison approachingPoison;
     private CeilingPoison ceilingPoison;
+
+    Transform map;
+    Transform grounds;
+    Transform flatGrounds;
+    Transform prisms;
+    Transform cones;
+    Transform asteroids;
 
     private List<GroundHeightData> groundHeights;
     private int groundHeightsIndex;
@@ -91,28 +98,49 @@ public class MapManager : MonoBehaviour
         if (instance == null)
         {
             instance = this;
-            spaceship = Instantiate(spaceshipPrefab);
-            startingPlatform = Instantiate(startingPlatformPrefab);
-            goal = Instantiate(goalPrefab);
-            approachingPoison = Instantiate(approachingPoisonPrefab);
-            ceilingPoison = Instantiate(ceilingPoisonPrefab);
-            ceilingPoison.yPos = poisonHeight;
-            LoadMap();
+            DontDestroyOnLoad(gameObject);
+            groundHeights = new List<GroundHeightData>();
             return;
         }
         Destroy(gameObject);
     }
 
+    public void StartGame(int level)
+    {
+        this.level = level;
+        GameManager.instance.spaceship = Instantiate(spaceshipPrefab);
+
+        map = Instantiate(mapPrefab).transform;
+        grounds = map.GetChild(0);
+        flatGrounds = grounds.GetChild(0);
+        prisms = grounds.GetChild(1);
+        cones = map.GetChild(1);
+        asteroids = map.GetChild(2);
+
+        startingPlatform = Instantiate(startingPlatformPrefab, map.transform);
+        goal = Instantiate(goalPrefab, map.transform);
+        approachingPoison = Instantiate(approachingPoisonPrefab, map.transform);
+        ceilingPoison = Instantiate(ceilingPoisonPrefab, map.transform);
+        ceilingPoison.yPos = poisonHeight;
+
+        LoadMap();
+    }
+
     public void GoalReached()
     {
-        DeleteOldMap();
+        DestroyMap();
         level += 1;
+        if (level > levels)
+        {
+            //handle beating game
+            return;
+        }
         LoadMap();
     }
 
     void LoadMap()
     {
-        groundHeights = new List<GroundHeightData>();
+        groundHeights.Clear();
         groundHeightsIndex = 0;
         LoadGround();
         LoadCones();
@@ -123,15 +151,24 @@ public class MapManager : MonoBehaviour
         LoadGoal();
     }
 
-    void DeleteOldMap()
+    void DestroyMap()
     {
-        for (int i = mapObjects.Count - 1; i >= 0; i--)
+        for (int i = flatGrounds.childCount - 1; i >= 0; i--)
         {
-            Destroy(mapObjects[i]);
+            Destroy(flatGrounds.GetChild(i).gameObject);
         }
-        
-        mapObjects.Clear();
-        groundHeights.Clear();
+        for (int i = prisms.childCount - 1; i >= 0; i--)
+        {
+            Destroy(prisms.GetChild(i).gameObject);
+        }
+        for (int i = cones.childCount - 1; i >= 0; i--)
+        {
+            Destroy(cones.GetChild(i).gameObject);
+        }
+        for (int i = asteroids.childCount - 1; i >= 0; i--)
+        {
+            Destroy(asteroids.GetChild(i).gameObject);
+        }
     }
 
     void LoadGround()
@@ -141,7 +178,7 @@ public class MapManager : MonoBehaviour
         float edgeOfLastGroundX = startingPlatformXPos -generationBufferXPos;
         while (edgeOfLastGroundX < goalDistance + generationBufferXPos)
         {
-            GameObject ground = Instantiate(groundPrefab);
+            GameObject ground = Instantiate(groundPrefab, flatGrounds);
 
             //puts new groudn block right after the previous one
             float groundLength = Random.Range(groundMinLength, groundMaxLength);
@@ -149,10 +186,8 @@ public class MapManager : MonoBehaviour
             ground.transform.localScale = new Vector3(groundLength, ground.transform.localScale.y, ground.transform.localScale.z);
             ground.transform.localPosition = new Vector3(edgeOfLastGroundX + (groundLength / 2), groundYPos, 0);
 
-            mapObjects.Add(ground);
-
             //create prism, to smoothen the edges between ground platforms
-            GameObject prism = Instantiate(prismPrefab);
+            GameObject prism = Instantiate(prismPrefab, prisms);
 
             float prismLength = Random.Range(prismMinLength, prismMaxLength);
             //make it so prism isnt longer than ground blocks
@@ -172,8 +207,6 @@ public class MapManager : MonoBehaviour
             prismYPos += ground.transform.localScale.y / 2;
             prism.transform.localScale = new Vector3(prismLength, prismHeight, prism.transform.localScale.z);
             prism.transform.localPosition = new Vector3(prismXPos, prismYPos, 0);
-
-            mapObjects.Add(prism);
 
             edgeOfLastGroundX += groundLength;
             previousGroundLength = groundLength;
@@ -205,12 +238,10 @@ public class MapManager : MonoBehaviour
                 float coneXRotation = Random.Range(-coneMaxXRotation, coneMaxXRotation);
                 float coneZRotation = Random.Range(-coneMaxZRotation, coneMaxZRotation);
 
-                GameObject cone = Instantiate(conePrefab);
+                GameObject cone = Instantiate(conePrefab, cones);
                 cone.transform.localScale = new Vector3(coneLength, coneHeight, cone.transform.localScale.z);
                 cone.transform.localPosition = new Vector3(coneXPos, coneYPos, 0);
                 cone.transform.Rotate(new Vector3(coneXRotation, 0, coneZRotation));
-
-                mapObjects.Add(cone);
             }
 
             previousConeXPos += coneDistance;
@@ -257,11 +288,9 @@ public class MapManager : MonoBehaviour
 
                     float asteroidZPos = Random.Range(-asteroidZVariance, asteroidZVariance);
 
-                    GameObject asteroid = Instantiate(asteroidPrefab);
+                    GameObject asteroid = Instantiate(asteroidPrefab, asteroids);
                     asteroid.transform.localScale = new Vector3(asteroidSize, asteroidSize, asteroidSize);
                     asteroid.transform.localPosition = new Vector3(asteroidXPos, asteroidYPos, asteroidZPos);
-
-                    mapObjects.Add(asteroid);
                 }
 
                 previousAsteroidXPos += asteroidDistance;
@@ -271,7 +300,7 @@ public class MapManager : MonoBehaviour
 
     void LoadPoison()
     {
-        approachingPoison.Reset(new Vector3(approachingPoisonStart.x, approachingPoisonStart.y, 0), poisionSpeed[level - 1]);
+        approachingPoison.SetValues(new Vector3(approachingPoisonStart.x, approachingPoisonStart.y, 0), poisionSpeed[level - 1]);
     }
 
     void LoadStartingPlatformAndSpaceship()
@@ -281,7 +310,7 @@ public class MapManager : MonoBehaviour
 
         startingPlatform.transform.position = new Vector3(startingPlatformXPos, startingPlatformYPos, 0);
 
-        spaceship.transform.position = new Vector3(startingPlatformXPos, startingPlatformYPos + spaceshipSpawnDistanceY, 0);
+        GameManager.instance.spaceship.transform.position = new Vector3(startingPlatformXPos, startingPlatformYPos + spaceshipSpawnDistanceY, 0);
     }
 
     void LoadGoal()

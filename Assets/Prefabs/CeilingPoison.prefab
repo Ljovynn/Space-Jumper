@@ -12,9 +12,10 @@ GameObject:
   - component: {fileID: 7114214447887209131}
   - component: {fileID: 1412872758881662493}
   - component: {fileID: -3809735744293758634}
+  - component: {fileID: 9112706954995223638}
   m_Layer: 0
   m_Name: CeilingPoison
-  m_TagString: Untagged
+  m_TagString: Poison
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -107,7 +108,7 @@ ParticleSystem:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-  moveWithTransform: 0
+  moveWithTransform: 1
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
   randomSeed: 0
@@ -170,7 +171,7 @@ ParticleSystem:
     startSpeed:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 7
+      scalar: 9
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -605,7 +606,7 @@ ParticleSystem:
         m_RotationOrder: 4
     randomizeRotationDirection: 0
     gravitySource: 0
-    maxNumParticles: 1600
+    maxNumParticles: 1800
     customEmitterVelocity: {x: 0, y: 0, z: 0}
     size3D: 0
     rotation3D: 0
@@ -673,7 +674,7 @@ ParticleSystem:
     donutRadius: 0.2
     m_Position: {x: 0, y: 0, z: 0}
     m_Rotation: {x: 0, y: 180, z: 0}
-    m_Scale: {x: 120, y: 1, z: 10}
+    m_Scale: {x: 180, y: 1, z: 10}
     placementMode: 0
     m_MeshMaterialIndex: 0
     m_MeshNormalOffset: 0
@@ -871,7 +872,7 @@ ParticleSystem:
     rateOverTime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 100
+      scalar: 140
       minScalar: 10
       maxCurve:
         serializedVersion: 2
@@ -2653,7 +2654,7 @@ ParticleSystem:
     drag:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0.001
+      scalar: 0.0017
       minScalar: 0
       maxCurve:
         serializedVersion: 2
@@ -3578,7 +3579,7 @@ ParticleSystem:
       maxColor: {r: 1, g: 1, b: 1, a: 1}
       maxGradient:
         serializedVersion: 2
-        key0: {r: 1, g: 1, b: 1, a: 1}
+        key0: {r: 0.65262944, g: 0.46257564, b: 0.7264151, a: 1}
         key1: {r: 0.33401182, g: 0, b: 0.46226418, a: 1}
         key2: {r: 0, g: 0, b: 0, a: 0}
         key3: {r: 0, g: 0, b: 0, a: 0}
@@ -3636,7 +3637,7 @@ ParticleSystem:
         m_ColorSpace: -1
         m_NumColorKeys: 2
         m_NumAlphaKeys: 2
-    range: {x: 0, y: 2.5}
+    range: {x: 0, y: 5}
   CollisionModule:
     enabled: 0
     serializedVersion: 4
@@ -4856,9 +4857,27 @@ MonoBehaviour:
   m_GameObject: {fileID: 5966195033100294364}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2a97b70d6c14b7b4b9f270faa5cf71e3, type: 3}
+  m_Script: {fileID: 11500000, guid: c81ad06e3e78ce146a05c717cf369426, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spaceShip: {fileID: 0}
-  yPos: 60
-  playerXOffset: 20
+--- !u!65 &9112706954995223638
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5966195033100294364}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 40, y: 7, z: 70}
+  m_Center: {x: -40, y: 0, z: 10}

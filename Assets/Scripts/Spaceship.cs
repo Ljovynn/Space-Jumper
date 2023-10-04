@@ -6,18 +6,36 @@ using UnityEngine;
 
 public class Spaceship : MonoBehaviour
 {
-    private float maxChargeTime = 2f;
-    private float minChargeForce = 0.6f;
-    private float maxChargeForce = 6f;
-    private float forceMultiplier = 4f;
+    private readonly float maxChargeTime = 2f;
+    private readonly float minChargeForce = 0.6f;
+    private readonly float maxChargeForce = 6f;
+    private readonly float forceMultiplier = 4f;
 
-    private float normalDrag = 0.15f;
-    private float chargeDrag = 0.93f;
+    private readonly float normalDrag = 0.15f;
+    private readonly float chargeDrag = 0.93f;
 
-    private float rotationMultiplier = 50f;
+    private readonly float rotationMultiplier = 55f;
     private List<Leg> legs = new List<Leg>();
-    bool isCharging = false;
+    public bool IsCharging { get; private set; } = false;
+
     private float chargeTimer = 0;
+
+    public readonly float maxHealth = 100;
+    public float Health { get; private set; }
+
+    private readonly float invulTime = 0.2f;
+    private float invulTimer = 0;
+
+    private readonly float poisonTime = 0.5f;
+    private float poisonTimer = 0;
+    private readonly float poisonDamageTime = 0.1f;
+    private float poisonDamageTimer = 0;
+    private readonly float poisonLevelTime = 0.3f;
+    private float poisonLevelTimer = 0;
+    private bool inPoison = false;
+    private bool poisoned = false;
+    private int poisonLevel = 0;
+    private readonly float[] poisonDamage = {0.3f, 0.5f, 0.9f, 1.5f, 3 };
 
     private Rigidbody rigidbody;
 
@@ -36,6 +54,7 @@ public class Spaceship : MonoBehaviour
     void Start()
     {
         //gets all the legs of the spaceship
+        Health = maxHealth;
         rigidbody = GetComponent<Rigidbody>();
         GameObject LegHolder = transform.Find("Legs").gameObject;
         for (int i = 0; i < LegHolder.transform.childCount; i++)
@@ -44,6 +63,9 @@ public class Spaceship : MonoBehaviour
         }
 
         rigidbody.drag = normalDrag;
+
+        poisonLevelTimer = poisonLevelTime;
+        poisonDamageTimer = poisonDamageTime;
     }
 
     private void OnEnable()
@@ -61,6 +83,8 @@ public class Spaceship : MonoBehaviour
     {
         CheckMovement();
         rigidbody.AddForce(Vector3.down * 0.06f);
+        UpdatePoison();
+        invulTimer -= Time.deltaTime;
     }
 
     private void CheckMovement()
@@ -69,9 +93,9 @@ public class Spaceship : MonoBehaviour
 
         if (chargeInput)
         {
-            if (!isCharging)
+            if (!IsCharging)
             {
-                isCharging = true;
+                IsCharging = true;
                 rigidbody.drag = chargeDrag;
                 foreach (Leg leg in legs)
                 {
@@ -82,7 +106,7 @@ public class Spaceship : MonoBehaviour
         }
         else
         {
-            if (isCharging)
+            if (IsCharging)
             {
                 Jump();
             }
@@ -93,9 +117,118 @@ public class Spaceship : MonoBehaviour
         rigidbody.MoveRotation(rigidbody.rotation * Quaternion.Euler(new Vector3(0, 0, -moveDir * rotationMultiplier) * Time.deltaTime));
     }
 
+    private void ResetConditions()
+    {
+        inPoison = false;
+        poisonLevel = 0;
+        poisonLevelTimer = poisonLevelTime;
+        poisonDamageTimer = poisonDamageTime;
+        poisoned = false;
+
+        Health = maxHealth;
+        rigidbody.velocity = Vector3.zero;
+        rigidbody.angularVelocity = Vector3.zero;
+        transform.rotation = Quaternion.identity;
+        IsCharging = false;
+        chargeTimer = 0;
+        foreach (Leg leg in legs)
+        {
+            leg.StopCharging();
+        }
+    }
+
+    private void TakeCrashDamage(float multiplier)
+    {
+        if (invulTimer < 0)
+        {
+            invulTimer = invulTime;
+
+            float damageTaken = rigidbody.velocity.magnitude * multiplier;
+            Debug.Log("Damage taken from crash: " + damageTaken);
+            ApplyDamage(damageTaken);
+        }
+    }
+
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.tag == "Poison")
+        {
+            inPoison = true;
+            poisonTimer = poisonTime;
+            poisoned = true;
+            Debug.Log("in poison");
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.tag == "Poison")
+        {
+            inPoison = false;
+            Debug.Log("exiting poison");
+        }
+    }
+
+    private void UpdatePoison()
+    {
+        if (!poisoned)
+        {
+            return;
+        }
+
+        poisonTimer -= Time.deltaTime;
+
+        if (poisonTimer < 0)
+        {
+            poisonLevel = 0;
+            poisonLevelTimer = poisonLevelTime;
+            poisonDamageTimer = poisonDamageTime;
+            poisoned = false;
+        }
+
+        //poison gets stronger if you stay in it
+        if (inPoison)
+        {
+            poisonLevelTimer -= Time.deltaTime;
+            if (poisonLevelTimer < 0)
+            {
+                poisonLevelTimer = poisonLevelTime;
+                if (poisonLevel < poisonDamage.Length)
+                {
+                    poisonLevel++;
+                }
+            }
+        }
+
+        //take poison damage
+        if (poisonLevel > 0)
+        {
+            poisonDamageTimer -= Time.deltaTime;
+            if (poisonDamageTimer < 0)
+            {
+                poisonDamageTimer = poisonDamageTime;
+                ApplyDamage(poisonDamage[poisonLevel - 1]);
+            }
+        }
+    }
+
+    private void ApplyDamage(float damage)
+    {
+        Health -= damage;
+        if (Health < 0)
+        {
+            Die();
+        }
+    }
+
+    private void Die()
+    {
+        GameManager.instance.GameOver();
+    }
+
     private void Jump()
     {
-        isCharging = false;
+        IsCharging = false;
         foreach (Leg leg in legs)
         {
             leg.StopCharging();
@@ -111,5 +244,23 @@ public class Spaceship : MonoBehaviour
         rigidbody.AddRelativeForce(Vector3.up * force, mode:ForceMode.VelocityChange);
 
         chargeTimer = 0;
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        switch (collision.gameObject.tag)
+        {
+            case "Goal":
+                Debug.Log("player collides with goal");
+                GameManager.instance.SpaceshipReachedGoal();
+                ResetConditions();
+                break;
+            case "Planet":
+                TakeCrashDamage(2);
+                break;
+            case "Cone":
+                TakeCrashDamage(4);
+                break;
+        }
     }
 }

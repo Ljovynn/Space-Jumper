@@ -6,8 +6,12 @@ public class CameraManager : MonoBehaviour
 {
     [SerializeField] private Transform targetTransform;
     private Vector3 cameraOffset = new Vector3(15, 1, -30);
+    private Vector3 cameraChargeOffset = new Vector3(0, 0, 2);
     private float cameraSpeed = 0.08f;
-    private bool active = false;
+    private float cameraMaxYPos = 36;
+    public bool active = false;
+
+    Vector3 inactivePos = new Vector3(0, 1, -10);
 
     public static CameraManager instance;
 
@@ -21,11 +25,22 @@ public class CameraManager : MonoBehaviour
         if (instance == null)
         {
             instance = this;
-            active = true;
-            targetTransform = GameObject.FindGameObjectWithTag("Player").transform;
+            DontDestroyOnLoad(gameObject);
             return;
         }
         Destroy(gameObject);
+    }
+
+    public void SetInactive()
+    {
+        active = false;
+        transform.position = inactivePos;
+    }
+
+    public void SetActive()
+    {
+        active = true;
+        targetTransform = GameObject.FindGameObjectWithTag("Player").transform;
     }
 
     // Update is called once per frame
@@ -33,7 +48,16 @@ public class CameraManager : MonoBehaviour
     {
         if (active)
         {
-            Vector3 targetPosition = targetTransform.position + cameraOffset;
+            Vector3 targetPosition;
+            if (GameManager.instance.spaceship.IsCharging)
+            {
+                targetPosition = targetTransform.position + cameraOffset + cameraChargeOffset;
+            }
+            else
+            {
+                targetPosition = targetTransform.position + cameraOffset;
+            }
+            targetPosition = new Vector3(targetPosition.x, System.Math.Min(targetPosition.y, cameraMaxYPos), targetPosition.z);
             Vector3 lerpPosition = Vector3.Lerp(transform.position, targetPosition, cameraSpeed);
             transform.position = lerpPosition;
         }

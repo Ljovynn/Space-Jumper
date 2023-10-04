@@ -44,12 +44,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 257e18e9564c6e0498e5a4ae68473e40, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mapPrefab: {fileID: 4116891630549980761, guid: b9308069d22e9544f95da46d3b00f130, type: 3}
   groundPrefab: {fileID: 1156093655394922654, guid: fa1a4d3edc2b2ce40a7f01a92c878911, type: 3}
   conePrefab: {fileID: 5004910979941916789, guid: 0f7b3764c7f041045b30277bc22e42b2, type: 3}
   asteroidPrefab: {fileID: 8286868249677927111, guid: 87c965cdda24d034991460526dde4930, type: 3}
   prismPrefab: {fileID: 8859141808939457774, guid: 53aafbf16d8ca93438508cdd84b1c02d, type: 3}
   spaceshipPrefab: {fileID: 1878533251954286215, guid: 07a46f146169765429dc44ec7b675f9f, type: 3}
   startingPlatformPrefab: {fileID: 8344015946916985744, guid: 85f02c94a49d3994bbfc537e9cfae662, type: 3}
-  goalPrefab: {fileID: 4811355755923582747, guid: 6d0439fe1a56fe7488f7ac087bcb5101, type: 3}
+  goalPrefab: {fileID: 8843271885349043416, guid: 6d0439fe1a56fe7488f7ac087bcb5101, type: 3}
   approachingPoisonPrefab: {fileID: 2396240780744925809, guid: 77a291820e672f24da164cc3720a4a8e, type: 3}
   ceilingPoisonPrefab: {fileID: -3809735744293758634, guid: bdabad09b98e5fa4682fcccc6a332354, type: 3}

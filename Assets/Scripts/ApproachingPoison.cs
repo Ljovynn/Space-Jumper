@@ -10,10 +10,10 @@ public class ApproachingPoison : MonoBehaviour
         
     }
 
-    public void Reset(Vector3 position, float speed)
+    public void SetValues(Vector3 position, float speed)
     {
         this.speed = speed;
-        //set position
+        transform.position = position;
     }
 
     // Update is called once per frame

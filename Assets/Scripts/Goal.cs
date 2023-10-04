@@ -9,18 +9,7 @@ public class Goal : MonoBehaviour
     {
     }
 
-    public delegate void GoalDelegate();
-    public static GoalDelegate goalReached;
-
-    private void OnCollisionEnter(Collision collision)
-    {
-        if (collision.gameObject.tag == "Player")
-        {
-            Debug.Log("goal reached");
-            goalReached?.Invoke();
-        }
-    }
-
+    
     void Update()
     {
         
