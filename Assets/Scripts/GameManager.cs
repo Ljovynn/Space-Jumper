@@ -28,7 +28,8 @@ public class GameManager : MonoBehaviour
 
     public void GameOver()
     {
-
+        UIManager.Instance.GameOver();
+        Time.timeScale = 0;
     }
 
     public void Pause()
@@ -59,6 +60,7 @@ public class GameManager : MonoBehaviour
     public void SpaceshipReachedGoal()
     {
         MapManager.instance.GoalReached();
+        CameraManager.instance.SnapToTarget();
     }
 
     public void StartGame()

@@ -8,16 +8,16 @@ public class Leg : MonoBehaviour
     Quaternion startingRot;
     Quaternion maxRot;
     Quaternion rotationTarget;
-    private float maxRotX = 40;
+    private float maxRotX = 60;
     private float minRotX = 22;
     private float rotationSpeed;
-    private float rotationSpeedCharge = 10f;
-    private float rotationSpeedUncharge = 100f;
+    private float rotationSpeedCharge = 20f;
+    private float rotationSpeedUncharge = 80f;
     
     void Start()
     {
-        startingRot = transform.rotation;
-        maxRot = new Quaternion(maxRotX, 180, 0, 0);// transform.rotation.z, transform.rotation.w);
+        startingRot = Quaternion.Euler(minRotX, transform.rotation.y, transform.rotation.y);
+        maxRot = Quaternion.Euler(maxRotX, transform.rotation.y, transform.rotation.y);
         rotationTarget = startingRot;
     }
 
@@ -38,16 +38,19 @@ public class Leg : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //transform.rotation = transform.local
+        //transform.rotation = Quaternion.Slerp(transform.localRotation, rotationTarget, Time.deltaTime * rotationSpeed);
+        
         if (charging)
         {
-            if (transform.rotation.x < maxRotX)
+            if (transform.localEulerAngles.x < maxRotX)
             {
                 transform.Rotate(Time.deltaTime * rotationSpeed, 0, 0);
             }
         }
         else
         {
-            if (transform.rotation.x > minRotX)
+            if (transform.localEulerAngles.x > minRotX)
             {
                 transform.Rotate(Time.deltaTime * -rotationSpeed, 0, 0);
             }

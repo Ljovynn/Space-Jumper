@@ -28,9 +28,9 @@ public class Spaceship : MonoBehaviour
 
     private readonly float poisonTime = 0.5f;
     private float poisonTimer = 0;
-    private readonly float poisonDamageTime = 0.1f;
+    private readonly float poisonDamageTime = 0.3f;
     private float poisonDamageTimer = 0;
-    private readonly float poisonLevelTime = 0.3f;
+    private readonly float poisonLevelTime = 0.6f;
     private float poisonLevelTimer = 0;
     private bool inPoison = false;
     private bool poisoned = false;
@@ -38,6 +38,8 @@ public class Spaceship : MonoBehaviour
     private readonly float[] poisonDamage = {0.3f, 0.5f, 0.9f, 1.5f, 3 };
 
     private Rigidbody rigidbody;
+    private float previousMagnitude = 0;
+    private SpaceshipEmmissions spaceshipEmmissions;
 
     private Controls controls;
     private InputAction TurnInputAction;
@@ -56,6 +58,11 @@ public class Spaceship : MonoBehaviour
         //gets all the legs of the spaceship
         Health = maxHealth;
         rigidbody = GetComponent<Rigidbody>();
+        spaceshipEmmissions = transform.GetChild(4).GetComponent<SpaceshipEmmissions>();
+        if (spaceshipEmmissions == null)
+        {
+            Debug.LogWarning("Could not find SpaceEmmissions gameobject");
+        }
         GameObject LegHolder = transform.Find("Legs").gameObject;
         for (int i = 0; i < LegHolder.transform.childCount; i++)
         {
@@ -85,6 +92,7 @@ public class Spaceship : MonoBehaviour
         rigidbody.AddForce(Vector3.down * 0.06f);
         UpdatePoison();
         invulTimer -= Time.deltaTime;
+        previousMagnitude = rigidbody.velocity.magnitude;
     }
 
     private void CheckMovement()
@@ -126,6 +134,7 @@ public class Spaceship : MonoBehaviour
         poisoned = false;
 
         Health = maxHealth;
+        UIManager.Instance.DisplayHealth(1);
         rigidbody.velocity = Vector3.zero;
         rigidbody.angularVelocity = Vector3.zero;
         transform.rotation = Quaternion.identity;
@@ -137,15 +146,26 @@ public class Spaceship : MonoBehaviour
         }
     }
 
-    private void TakeCrashDamage(float multiplier)
+    private void TakeCrashDamage(float multiplier, Vector3 otherPos)
     {
+        //apply angle multiplier
         if (invulTimer < 0)
         {
             invulTimer = invulTime;
 
-            float damageTaken = rigidbody.velocity.magnitude * multiplier;
-            Debug.Log("Damage taken from crash: " + damageTaken);
+            float damageTaken = previousMagnitude * multiplier;
+
+            Vector3 forward = transform.TransformDirection(Vector3.up).normalized;
+            float dot = Vector3.Dot(forward, otherPos);
+            dot = System.Math.Max(dot, -dot);
+            //have a minimum
+            dot = System.Math.Max(dot, 0.2f);
+
+            damageTaken = damageTaken * dot;
+
             ApplyDamage(damageTaken);
+            Debug.Log("Damage taken from crash: " + damageTaken);
+            //Debug.Log("Dot: " + Vector3.Dot(forward, otherPos));
         }
     }
 
@@ -156,7 +176,6 @@ public class Spaceship : MonoBehaviour
             inPoison = true;
             poisonTimer = poisonTime;
             poisoned = true;
-            Debug.Log("in poison");
         }
     }
 
@@ -165,7 +184,6 @@ public class Spaceship : MonoBehaviour
         if (other.tag == "Poison")
         {
             inPoison = false;
-            Debug.Log("exiting poison");
         }
     }
 
@@ -215,6 +233,7 @@ public class Spaceship : MonoBehaviour
     private void ApplyDamage(float damage)
     {
         Health -= damage;
+        UIManager.Instance.DisplayHealth(Health / maxHealth);
         if (Health < 0)
         {
             Die();
@@ -244,6 +263,8 @@ public class Spaceship : MonoBehaviour
         rigidbody.AddRelativeForce(Vector3.up * force, mode:ForceMode.VelocityChange);
 
         chargeTimer = 0;
+
+        spaceshipEmmissions.Emit(chargePercent);
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -256,10 +277,10 @@ public class Spaceship : MonoBehaviour
                 ResetConditions();
                 break;
             case "Planet":
-                TakeCrashDamage(2);
+                TakeCrashDamage(2, collision.contacts[0].normal);
                 break;
             case "Cone":
-                TakeCrashDamage(4);
+                TakeCrashDamage(4, collision.contacts[0].normal);
                 break;
         }
     }

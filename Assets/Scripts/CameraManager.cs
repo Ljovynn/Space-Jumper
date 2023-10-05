@@ -43,6 +43,11 @@ public class CameraManager : MonoBehaviour
         targetTransform = GameObject.FindGameObjectWithTag("Player").transform;
     }
 
+    public void SnapToTarget()
+    {
+        transform.position = targetTransform.position + cameraOffset;
+    }
+
     // Update is called once per frame
     void FixedUpdate()
     {

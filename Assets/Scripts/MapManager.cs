@@ -8,7 +8,7 @@ using UnityEngine.ProBuilder.Shapes;
 
 public class MapManager : MonoBehaviour
 {
-    private float goalDistance = 50;//1000;
+    private float goalDistance = 1000;
     private float goalYDistance = 4;
     private float generationBufferXPos = 50;
 

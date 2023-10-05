@@ -10,7 +10,8 @@ public class UIManager : MonoBehaviour
 
     private GameObject pauseMenu;
     private GameObject gameOverMenu;
-    private GameObject healthBar;
+    private RectTransform healthBar;
+    private float healthBardMaxWidth;
 
     public void Initialize()
     {
@@ -59,7 +60,8 @@ public class UIManager : MonoBehaviour
                 gameOverMenu = GameObject.Find("GameOverMenu");
                 gameOverMenu.SetActive(false);
 
-                healthBar = GameObject.Find("HealthBar");
+                healthBar = GameObject.Find("Health").GetComponent<RectTransform>();
+                healthBardMaxWidth = healthBar.rect.width;
             }
         }
     }
@@ -70,16 +72,15 @@ public class UIManager : MonoBehaviour
         GameManager.instance.LoadMenu();
     }
 
-    /*public void LoadGameFromStart()
+    public void DisplayHealth(float healthPercent)
     {
-        GameManager.instance.StartGame();
-        if (!SwitchToScene("Ingame"))
-        {
-            GameManager.instance.LoadGameStart();
-            pauseMenu = GameObject.Find("PauseMenu");
-            pauseMenu.SetActive(false);
-        }
-    }*/
+        healthBar.sizeDelta = new Vector2(healthBardMaxWidth * healthPercent, healthBar.rect.height);
+    }
+
+    public void GameOver()
+    {
+        gameOverMenu.SetActive(true);
+    }
 
     private bool SwitchToScene(string name)
     {
