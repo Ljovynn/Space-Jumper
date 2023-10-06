@@ -12,8 +12,6 @@ public class MapManager : MonoBehaviour
     private float goalYDistance = 4;
     private float generationBufferXPos = 50;
 
-    private int levels = 3;
-
     private float poisonHeight = 60;
     private Vector2 approachingPoisonStart = new Vector2(-60, 10);
     private float[] poisionSpeed = { 2, 4, 8 };
@@ -83,9 +81,9 @@ public class MapManager : MonoBehaviour
     private List<GroundHeightData> groundHeights;
     private int groundHeightsIndex;
 
-    private int level = 1;
+    
 
-    public static MapManager instance;
+    public static MapManager Instance;
 
     // Start is called before the first frame update
     void Start()
@@ -95,9 +93,9 @@ public class MapManager : MonoBehaviour
 
     public void Initialize()
     {
-        if (instance == null)
+        if (Instance == null)
         {
-            instance = this;
+            Instance = this;
             DontDestroyOnLoad(gameObject);
             groundHeights = new List<GroundHeightData>();
             return;
@@ -105,10 +103,9 @@ public class MapManager : MonoBehaviour
         Destroy(gameObject);
     }
 
-    public void StartGame(int level)
+    public void StartGame()
     {
-        this.level = level;
-        GameManager.instance.spaceship = Instantiate(spaceshipPrefab);
+        GameManager.Instance.spaceship = Instantiate(spaceshipPrefab);
 
         map = Instantiate(mapPrefab).transform;
         grounds = map.GetChild(0);
@@ -126,20 +123,15 @@ public class MapManager : MonoBehaviour
         LoadMap();
     }
 
-    public void GoalReached()
+    public void Reset()
     {
         DestroyMap();
-        level += 1;
-        if (level > levels)
-        {
-            //handle beating game
-            return;
-        }
         LoadMap();
     }
 
     void LoadMap()
     {
+        Debug.Log("Loading map");
         groundHeights.Clear();
         groundHeightsIndex = 0;
         LoadGround();
@@ -300,7 +292,7 @@ public class MapManager : MonoBehaviour
 
     void LoadPoison()
     {
-        approachingPoison.SetValues(new Vector3(approachingPoisonStart.x, approachingPoisonStart.y, 0), poisionSpeed[level - 1]);
+        approachingPoison.SetValues(new Vector3(approachingPoisonStart.x, approachingPoisonStart.y, 0), poisionSpeed[GameManager.Instance.Level - 1]);
     }
 
     void LoadStartingPlatformAndSpaceship()
@@ -310,7 +302,8 @@ public class MapManager : MonoBehaviour
 
         startingPlatform.transform.position = new Vector3(startingPlatformXPos, startingPlatformYPos, 0);
 
-        GameManager.instance.spaceship.transform.position = new Vector3(startingPlatformXPos, startingPlatformYPos + spaceshipSpawnDistanceY, 0);
+        GameManager.Instance.spaceship.transform.position = new Vector3(startingPlatformXPos, startingPlatformYPos + spaceshipSpawnDistanceY, 0);
+        //GameManager.Instance.spaceship.ResetConditions();
     }
 
     void LoadGoal()

@@ -5,7 +5,7 @@ using UnityEngine;
 public class CameraManager : MonoBehaviour
 {
     [SerializeField] private Transform targetTransform;
-    private Vector3 cameraOffset = new Vector3(15, 1, -30);
+    private Vector3 cameraOffset = new Vector3(18, 1, -30);
     private Vector3 cameraChargeOffset = new Vector3(0, 0, 2);
     private float cameraSpeed = 0.08f;
     private float cameraMaxYPos = 36;
@@ -13,18 +13,17 @@ public class CameraManager : MonoBehaviour
 
     Vector3 inactivePos = new Vector3(0, 1, -10);
 
-    public static CameraManager instance;
+    public static CameraManager Instance;
 
     void Start()
     {
- 
     }
 
     public void Initialize()
     {
-        if (instance == null)
+        if (Instance == null)
         {
-            instance = this;
+            Instance = this;
             DontDestroyOnLoad(gameObject);
             return;
         }
@@ -54,7 +53,7 @@ public class CameraManager : MonoBehaviour
         if (active)
         {
             Vector3 targetPosition;
-            if (GameManager.instance.spaceship.IsCharging)
+            if (GameManager.Instance.spaceship.IsCharging)
             {
                 targetPosition = targetTransform.position + cameraOffset + cameraChargeOffset;
             }

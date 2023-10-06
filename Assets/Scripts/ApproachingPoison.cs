@@ -19,7 +19,10 @@ public class ApproachingPoison : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        float movementX = speed * Time.deltaTime;
-        transform.position = new Vector3(transform.position.x + movementX, transform.position.y, transform.position.z);
+        if (GameManager.Instance.state == GameManager.GameState.Ingame)
+        {
+            float movementX = speed * Time.deltaTime;
+            transform.position = new Vector3(transform.position.x + movementX, transform.position.y, transform.position.z);
+        }
     }
 }

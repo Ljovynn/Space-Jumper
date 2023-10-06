@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Composites;
 using UnityEngine;
+using System.Security.Cryptography;
 
 public class Spaceship : MonoBehaviour
 {
@@ -35,7 +36,7 @@ public class Spaceship : MonoBehaviour
     private bool inPoison = false;
     private bool poisoned = false;
     private int poisonLevel = 0;
-    private readonly float[] poisonDamage = {0.3f, 0.5f, 0.9f, 1.5f, 3 };
+    private readonly float[] poisonDamage = {0.3f, 0.5f, 0.9f, 1.8f, 5 };
 
     private Rigidbody rigidbody;
     private float previousMagnitude = 0;
@@ -44,6 +45,15 @@ public class Spaceship : MonoBehaviour
     private Controls controls;
     private InputAction TurnInputAction;
     private InputAction JumpInputAction;
+
+    private Color baseColor = Color.white;
+    private Color poisonedColor = new Color(0.7f, 0.4f, 0.8f);
+    private Color damageColor = new Color(0.8f, 0.3f, 0.35f);
+    private Color targetColor;
+    private float colorTimeLeft = 0;
+    private float colorTransitionTime = 0.3f;
+
+    private Renderer[] renderers;
 
     // Start is called before the first frame update
 
@@ -59,6 +69,8 @@ public class Spaceship : MonoBehaviour
         Health = maxHealth;
         rigidbody = GetComponent<Rigidbody>();
         spaceshipEmmissions = transform.GetChild(4).GetComponent<SpaceshipEmmissions>();
+        renderers = GetComponentsInChildren<Renderer>();
+        targetColor = baseColor;
         if (spaceshipEmmissions == null)
         {
             Debug.LogWarning("Could not find SpaceEmmissions gameobject");
@@ -91,6 +103,7 @@ public class Spaceship : MonoBehaviour
         CheckMovement();
         rigidbody.AddForce(Vector3.down * 0.06f);
         UpdatePoison();
+        UpdateColor();
         invulTimer -= Time.deltaTime;
         previousMagnitude = rigidbody.velocity.magnitude;
     }
@@ -98,6 +111,11 @@ public class Spaceship : MonoBehaviour
     private void CheckMovement()
     {
         bool chargeInput = JumpInputAction.IsPressed();
+
+        if (GameManager.Instance.state == GameManager.GameState.StartOfLevel)
+        {
+            chargeInput = false;
+        }
 
         if (chargeInput)
         {
@@ -125,8 +143,47 @@ public class Spaceship : MonoBehaviour
         rigidbody.MoveRotation(rigidbody.rotation * Quaternion.Euler(new Vector3(0, 0, -moveDir * rotationMultiplier) * Time.deltaTime));
     }
 
-    private void ResetConditions()
+    private void SetNewTargetColor(Color newColor)
     {
+        if (newColor != targetColor)
+        {
+            colorTimeLeft = colorTransitionTime;
+            targetColor = newColor;
+        }
+    }
+
+    private void UpdateColor()
+    {
+        if (colorTimeLeft <= Time.deltaTime)
+        {
+            ApplyColor(targetColor);
+            if (targetColor != baseColor)
+            {
+                SetNewTargetColor(baseColor);
+            }
+        }
+        else
+        {
+            for (int i = 0; i < renderers.Length; i++)
+            {
+                renderers[i].material.color = Color.Lerp(renderers[i].material.color, targetColor, Time.deltaTime / colorTimeLeft);
+            }
+
+            colorTimeLeft -= Time.deltaTime;
+        }
+    }
+
+    private void ApplyColor(Color color)
+    {
+        for (int i = 0; i < renderers.Length; i++)
+        {
+            renderers[i].material.color = color;
+        }
+    }
+
+    public void ResetConditions()
+    {
+        targetColor = baseColor;
         inPoison = false;
         poisonLevel = 0;
         poisonLevelTimer = poisonLevelTime;
@@ -164,6 +221,7 @@ public class Spaceship : MonoBehaviour
             damageTaken = damageTaken * dot;
 
             ApplyDamage(damageTaken);
+            SetNewTargetColor(damageColor);
             Debug.Log("Damage taken from crash: " + damageTaken);
             //Debug.Log("Dot: " + Vector3.Dot(forward, otherPos));
         }
@@ -226,6 +284,7 @@ public class Spaceship : MonoBehaviour
             {
                 poisonDamageTimer = poisonDamageTime;
                 ApplyDamage(poisonDamage[poisonLevel - 1]);
+                SetNewTargetColor(poisonedColor);
             }
         }
     }
@@ -242,7 +301,8 @@ public class Spaceship : MonoBehaviour
 
     private void Die()
     {
-        GameManager.instance.GameOver();
+        ApplyColor(damageColor);
+        GameManager.Instance.GameOver();
     }
 
     private void Jump()
@@ -273,7 +333,7 @@ public class Spaceship : MonoBehaviour
         {
             case "Goal":
                 Debug.Log("player collides with goal");
-                GameManager.instance.SpaceshipReachedGoal();
+                GameManager.Instance.SpaceshipReachedGoal();
                 ResetConditions();
                 break;
             case "Planet":

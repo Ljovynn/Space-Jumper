@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
@@ -10,7 +12,14 @@ public class UIManager : MonoBehaviour
 
     private GameObject pauseMenu;
     private GameObject gameOverMenu;
+    private GameObject winMenu;
+
     private RectTransform healthBar;
+    private TextMeshProUGUI gameTimerText;
+    private TextMeshProUGUI levelText;
+    private TextMeshProUGUI levelStartText;
+    private TextMeshProUGUI bestTimeText;
+
     private float healthBardMaxWidth;
 
     public void Initialize()
@@ -27,13 +36,26 @@ public class UIManager : MonoBehaviour
 
     public void StartGameButton()
     {
-        GameManager.instance.StartGame();
+        GameManager.Instance.StartGame();
         SwitchToScene("Ingame");
     }
 
     public void ResumeButton()
     {
-        GameManager.instance.Pause();
+        GameManager.Instance.Pause();
+    }
+
+    public void RestartButton()
+    {
+        Instance.Restart();
+    }
+
+    public void Restart()
+    {
+        GameManager.Instance.RestartGame();
+        gameTimerText.text = "0:00:00";
+        UpdateLevelText(1);
+        gameOverMenu.SetActive(false);
     }
 
     public void Pause(bool shouldPause)
@@ -43,7 +65,7 @@ public class UIManager : MonoBehaviour
     
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        if (GameManager.instance.state == GameManager.GameState.Menu)
+        if (GameManager.Instance.state == GameManager.GameState.Menu)
         {
 
         }
@@ -52,7 +74,7 @@ public class UIManager : MonoBehaviour
             if (this == Instance)
             {
                 Debug.Log("scene loaded");
-                GameManager.instance.LoadGameStart();
+                GameManager.Instance.LoadGameStart();
 
                 pauseMenu = GameObject.Find("PauseMenu");
                 pauseMenu.SetActive(false);
@@ -60,16 +82,48 @@ public class UIManager : MonoBehaviour
                 gameOverMenu = GameObject.Find("GameOverMenu");
                 gameOverMenu.SetActive(false);
 
+                bestTimeText = GameObject.Find("BestTimeText").GetComponent<TextMeshProUGUI>();
+
+                winMenu = GameObject.Find("WinMenu");
+                winMenu.SetActive(false);
+
                 healthBar = GameObject.Find("Health").GetComponent<RectTransform>();
                 healthBardMaxWidth = healthBar.rect.width;
+
+                gameTimerText = GameObject.Find("Timer").GetComponent<TextMeshProUGUI>();
+                gameTimerText.text = "0:00:00";
+
+                levelText = GameObject.Find("LevelIndicator").GetComponent<TextMeshProUGUI>();
+                UpdateLevelText(1);
+
+                levelStartText = GameObject.Find("LevelStartText").GetComponent<TextMeshProUGUI>();
+                levelStartText.text = "3";
             }
         }
+    }
+
+    public void WinGame()
+    {
+        winMenu.SetActive(true);
+
+        TimeSpan time = TimeSpan.FromSeconds(GameManager.Instance.BestTime);
+        bestTimeText.text = "Best time: " + time.ToString("m':'ss':'ff");
+    }
+
+    public void UpdateLevelText(int level)
+    {
+        levelText.text = "Level " + level;
+    }
+
+    public void RemoveLevelStartText()
+    {
+        levelStartText.text = "";
     }
 
     public void LoadMenu()
     {
         SwitchToScene("Main Menu");
-        GameManager.instance.LoadMenu();
+        GameManager.Instance.LoadMenu();
     }
 
     public void DisplayHealth(float healthPercent)
@@ -95,6 +149,13 @@ public class UIManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (GameManager.Instance.state == GameManager.GameState.Ingame)
+        {
+            TimeSpan time = TimeSpan.FromSeconds(GameManager.Instance.GameTimer);
+            gameTimerText.text = time.ToString("m':'ss':'ff");
+        } else if (GameManager.Instance.state == GameManager.GameState.StartOfLevel)
+        {
+            levelStartText.text = GameManager.Instance.LevelStartTimer.ToString("0");
+        }
     }
 }
