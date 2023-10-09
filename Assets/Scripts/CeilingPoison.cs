@@ -19,7 +19,6 @@ public class CeilingPoison : MonoBehaviour
         transform.position = new Vector3(spaceShip.position.x + playerXOffset, yPos, 0);
     }
 
-    // Update is called once per frame
     void Update()
     {
         transform.position = new Vector3(spaceShip.position.x + playerXOffset, yPos, 0);
