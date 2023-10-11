@@ -4,8 +4,11 @@
 # How to play
 
 Create an empty Unity 3D project in Unity version 2022.3.8f1
-Copy the Assets, Packages, and ProjectSettings folders into the new project file
+
+Copy the Assets, Packages, and ProjectSettings folders into the new project file.
+
 Now you have the game in the editor. You can also build the game as well.
+
 The controls are explained in the main menu.
 
 # Resources used
