@@ -1,11 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditorInternal;
 using UnityEngine;
 
 public class SpaceshipEmmissions : MonoBehaviour
 {
-    // Start is called before the first frame update
 
     private ParticleSystem particleSystem;
     private readonly int maxParticles = 15;

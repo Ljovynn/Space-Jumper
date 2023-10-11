@@ -145,6 +145,7 @@ public class MapManager : MonoBehaviour
 
     void DestroyMap()
     {
+        //destroys all children in relevant children of Map gameobject
         for (int i = flatGrounds.childCount - 1; i >= 0; i--)
         {
             Destroy(flatGrounds.GetChild(i).gameObject);
@@ -172,7 +173,7 @@ public class MapManager : MonoBehaviour
         {
             GameObject ground = Instantiate(groundPrefab, flatGrounds);
 
-            //puts new groudn block right after the previous one
+            //puts new ground block right after the previous one
             float groundLength = Random.Range(groundMinLength, groundMaxLength);
             float groundYPos = Random.Range(groundMinHeight, groundMaxHeight);
             ground.transform.localScale = new Vector3(groundLength, ground.transform.localScale.y, ground.transform.localScale.z);
@@ -313,6 +314,7 @@ public class MapManager : MonoBehaviour
         goal.transform.position = new Vector3(startingPlatformXPos + goalDistance, goalYPos, 0);
     }
 
+    //gets the Y pos of the ground at a certain X pos
     float GetGroundHeightInXPos(float xPos)
     {
         for (int i = groundHeightsIndex; i < groundHeights.Count; i++)
@@ -340,11 +342,5 @@ public class MapManager : MonoBehaviour
         }
 
         return false;
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }

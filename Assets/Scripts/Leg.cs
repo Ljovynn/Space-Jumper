@@ -35,12 +35,9 @@ public class Leg : MonoBehaviour
         rotationSpeed = rotationSpeedUncharge;
     }
 
-    // Update is called once per frame
     void Update()
     {
-        //transform.rotation = transform.local
-        //transform.rotation = Quaternion.Slerp(transform.localRotation, rotationTarget, Time.deltaTime * rotationSpeed);
-        
+        //rotate based on if its charging or not
         if (charging)
         {
             if (transform.localEulerAngles.x < maxRotX)

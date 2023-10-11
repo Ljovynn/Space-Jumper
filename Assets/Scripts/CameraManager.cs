@@ -62,6 +62,7 @@ public class CameraManager : MonoBehaviour
                 targetPosition = targetTransform.position + cameraOffset;
             }
             targetPosition = new Vector3(targetPosition.x, System.Math.Min(targetPosition.y, cameraMaxYPos), targetPosition.z);
+            //smooth transition to target position
             Vector3 lerpPosition = Vector3.Lerp(transform.position, targetPosition, cameraSpeed);
             transform.position = lerpPosition;
         }

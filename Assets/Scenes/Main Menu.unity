@@ -541,7 +541,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: "Control a spaceship through a random planet before the poison catches
     you!\n\nControls: \nLeft / right arrow to turn\nspace to charge a jump\nEscape
-    to pause"
+    to pause / quit game"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}

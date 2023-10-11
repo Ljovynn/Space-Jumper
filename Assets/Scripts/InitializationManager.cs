@@ -53,10 +53,4 @@ public class InitializationManager : MonoBehaviour
         var uiManager = Instantiate(uiManagerPrefab);
         uiManager.Initialize();
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }

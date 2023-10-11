@@ -65,7 +65,6 @@ public class Spaceship : MonoBehaviour
     }
     void Start()
     {
-        //gets all the legs of the spaceship
         Health = maxHealth;
         rigidbody = GetComponent<Rigidbody>();
         spaceshipEmmissions = transform.GetChild(4).GetComponent<SpaceshipEmmissions>();
@@ -76,6 +75,7 @@ public class Spaceship : MonoBehaviour
             Debug.LogWarning("Could not find SpaceEmmissions gameobject");
         }
         GameObject LegHolder = transform.Find("Legs").gameObject;
+        //gets all the "legs" of the spaceship
         for (int i = 0; i < LegHolder.transform.childCount; i++)
         {
             legs.Add(LegHolder.transform.GetChild(i).gameObject.GetComponent<Leg>());
@@ -138,7 +138,7 @@ public class Spaceship : MonoBehaviour
             }
         }
 
-        //cnange to angular velocity?
+        //turn spaceship
         float moveDir = TurnInputAction.ReadValue<float>();
         rigidbody.MoveRotation(rigidbody.rotation * Quaternion.Euler(new Vector3(0, 0, -moveDir * rotationMultiplier) * Time.deltaTime));
     }
@@ -152,6 +152,7 @@ public class Spaceship : MonoBehaviour
         }
     }
 
+    //smooth transition to target color
     private void UpdateColor()
     {
         if (colorTimeLeft <= Time.deltaTime)
@@ -159,6 +160,7 @@ public class Spaceship : MonoBehaviour
             ApplyColor(targetColor);
             if (targetColor != baseColor)
             {
+                //switches to base color
                 SetNewTargetColor(baseColor);
             }
         }
@@ -205,13 +207,14 @@ public class Spaceship : MonoBehaviour
 
     private void TakeCrashDamage(float multiplier, Vector3 otherPos)
     {
-        //apply angle multiplier
         if (invulTimer < 0)
         {
             invulTimer = invulTime;
 
+            //more damage with more magnitude
             float damageTaken = previousMagnitude * multiplier;
 
+            //less damage if the side of the ship is hit
             Vector3 forward = transform.TransformDirection(Vector3.up).normalized;
             float dot = Vector3.Dot(forward, otherPos);
             dot = System.Math.Max(dot, -dot);
@@ -223,7 +226,6 @@ public class Spaceship : MonoBehaviour
             ApplyDamage(damageTaken);
             SetNewTargetColor(damageColor);
             Debug.Log("Damage taken from crash: " + damageTaken);
-            //Debug.Log("Dot: " + Vector3.Dot(forward, otherPos));
         }
     }
 
@@ -245,6 +247,8 @@ public class Spaceship : MonoBehaviour
         }
     }
 
+
+    //all poison calculations here
     private void UpdatePoison()
     {
         if (!poisoned)

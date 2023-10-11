@@ -151,6 +151,7 @@ public class UIManager : MonoBehaviour
     {
         if (GameManager.Instance.state == GameManager.GameState.Ingame)
         {
+            //convert float to time
             TimeSpan time = TimeSpan.FromSeconds(GameManager.Instance.GameTimer);
             gameTimerText.text = time.ToString("m':'ss':'ff");
         } else if (GameManager.Instance.state == GameManager.GameState.StartOfLevel)

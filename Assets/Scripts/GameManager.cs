@@ -34,11 +34,6 @@ public class GameManager : MonoBehaviour
     public float LevelStartTimer { get; private set; }
     public float BestTime { get; private set; }
 
-    void Start()
-    {
-
-    }
-
     void Update()
     {
         if (state == GameState.Ingame)
@@ -64,7 +59,7 @@ public class GameManager : MonoBehaviour
 
     public void Pause()
     {
-        if (state != GameState.Menu)
+        if (state == GameState.Ingame)
         {
             if (Paused)
             {
@@ -77,6 +72,9 @@ public class GameManager : MonoBehaviour
                 Time.timeScale = 0;
             }
             UIManager.Instance.Pause(Paused);
+        } else if (state == GameState.Menu)
+        {
+            Application.Quit();
         }
     }
     private void OnDisable()
