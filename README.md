@@ -1,5 +1,5 @@
 # Space Jumper
- Control a jumping spaceship through randomly generated planets to reach the goal in time!
+ Control a jumping spaceship through randomly generated planets to reach the goal before the poison overtakes you! Try to get the best time!
 
 # How to play
 
