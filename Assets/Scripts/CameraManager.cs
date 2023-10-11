@@ -47,7 +47,6 @@ public class CameraManager : MonoBehaviour
         transform.position = targetTransform.position + cameraOffset;
     }
 
-    // Update is called once per frame
     void FixedUpdate()
     {
         if (active)
@@ -55,6 +54,7 @@ public class CameraManager : MonoBehaviour
             Vector3 targetPosition;
             if (GameManager.Instance.spaceship.IsCharging)
             {
+                //zoom in while spaceship is charging
                 targetPosition = targetTransform.position + cameraOffset + cameraChargeOffset;
             }
             else
@@ -62,7 +62,8 @@ public class CameraManager : MonoBehaviour
                 targetPosition = targetTransform.position + cameraOffset;
             }
             targetPosition = new Vector3(targetPosition.x, System.Math.Min(targetPosition.y, cameraMaxYPos), targetPosition.z);
-            //smooth transition to target position
+
+            //smooth transition to target
             Vector3 lerpPosition = Vector3.Lerp(transform.position, targetPosition, cameraSpeed);
             transform.position = lerpPosition;
         }

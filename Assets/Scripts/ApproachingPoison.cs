@@ -20,7 +20,7 @@ public class ApproachingPoison : MonoBehaviour
     {
         if (GameManager.Instance.state == GameManager.GameState.Ingame)
         {
-            //move right
+            //move to the right
             float movementX = speed * Time.deltaTime;
             transform.position = new Vector3(transform.position.x + movementX, transform.position.y, transform.position.z);
         }
